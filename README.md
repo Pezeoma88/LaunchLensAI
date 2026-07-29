@@ -17,21 +17,21 @@ https://launchlensai-y28n.onrender.com
 ### Home Page
 
 
-![Home](images/HomePage.png)
+![Home](screenshots/HomePage.png)
 
 ---
 
 ### Business Validation Report
 
 
-![Dashboard](images/BusinessValidationReport.png)
+![Dashboard](screenshots/BusinessValidationReport.png)
 
 ---
 
 ### Saved Reports
 
 
-![History](images/SavedReports.png)
+![History](screenshots/SavedReports.png)
 
 ---
 
