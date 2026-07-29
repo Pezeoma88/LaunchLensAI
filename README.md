@@ -176,4 +176,9 @@ https://github.com/Pezeoma88
 
 ## License
 
-This project is licensed under the MIT License.
+## Copyright
+
+© 2026 Prince Ezeoma. All rights reserved.
+
+This repository is provided for viewing and portfolio purposes only. No permission is granted to copy, modify, distribute, or reuse this code, in whole or in part, without the express written permission of the author.
+
