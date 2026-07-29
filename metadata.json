@@ -1,0 +1,6 @@
+{
+  "name": "LaunchLensAI",
+  "description": "Comprehensive business idea validation tool checking competitors, patents, domain availability, market size, monetization, SWOT, and launch strategy.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
