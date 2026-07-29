@@ -8,7 +8,7 @@ import {
   Star,
 } from "lucide-react";
 
-import { BusinessAnalysisReport } from "../types";
+import { BusinessAnalysisReport } from "../types/types";
 
 interface ReportHistoryProps {
   historyList: BusinessAnalysisReport[];

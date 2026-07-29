@@ -20,7 +20,7 @@ import {
   Briefcase,
   HelpCircle,
 } from "lucide-react";
-import { BusinessAnalysisReport } from "../types";
+import { BusinessAnalysisReport } from "../types/types";
 import MarketChart from "./MarketChart";
 
 interface ReportDashboardProps {

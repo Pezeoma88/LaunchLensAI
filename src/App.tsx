@@ -1,5 +1,6 @@
-import { saveReport } from "./firestore";
-import { db } from "./firebase";
+import { saveReport } from "./firebase/firestore";
+import { db, auth } from "./firebase/firebase";
+import { signInWithGoogle, logout } from "./firebase/auth";
 import {
   collection,
   addDoc,
@@ -13,8 +14,6 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "./firebase";
-import { signInWithGoogle, logout } from "./auth";
 import React, { useState, useEffect } from "react";
 import {
   Sparkles,
@@ -29,7 +28,7 @@ import {
 } from "lucide-react";
 import Navbar from "./components/Navbar";
 import { SAMPLE_IDEAS, SampleIdea } from "./components/SampleIdeas";
-import { BusinessAnalysisReport } from "./types";
+import { BusinessAnalysisReport } from "./types/types";
 import ReportDashboard from "./components/ReportDashboard";
 import ReportHistory from "./components/ReportHistory";
 
@@ -136,8 +135,11 @@ const filteredHistory = history.filter((report) => {
     setError(null);
     setCurrentReport(null);
 
+    const API_URL =
+  import.meta.env.VITE_API_URL || "https://launchlensai-y28n.onrender.com";
+
     try {
-     const response = await fetch("/api/analyze", {
+     const response = await fetch(`${API_URL}/api/analyze`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -160,7 +162,7 @@ try {
 }
 
 if (!response.ok) {
-  throw new Error(data.error || "Analysis failed.");
+  throw new Error(data.error || "An error occurred during verification.");
 }
 
       // Prepare complete report object
