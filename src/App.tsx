@@ -56,6 +56,7 @@ export default function App() {
   const [currentReport, setCurrentReport] = useState<BusinessAnalysisReport | null>(null);
   const [history, setHistory] = useState<BusinessAnalysisReport[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [historyExpanded, setHistoryExpanded] = useState(true);
   useEffect(() => {
   if (!user) {
     setHistory([]);
@@ -545,21 +546,23 @@ gap-5 mt-10
             </div>
 
             {/* History component */}
-           <ReportHistory
-              historyList={filteredHistory}
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              selectedReportId={currentReport?.id || null}
-              onSelect={(rep) => {
-                setCurrentReport(rep);
-                setIdea(rep.inputIdea);
-                setIndustry(rep.industry || "");
-                setTargetAudience(rep.targetAudience || "");
-              }}
-              onDelete={handleDeleteHistoryItem}
-              onToggleFavorite={handleToggleFavorite}
-              onClearAll={handleClearAllHistory}
-            />
+          <ReportHistory
+            historyList={filteredHistory}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            selectedReportId={currentReport?.id || null}
+            onSelect={(rep) => {
+              setCurrentReport(rep);
+              setIdea(rep.inputIdea);
+              setIndustry(rep.industry || "");
+              setTargetAudience(rep.targetAudience || "");
+            }}
+            onDelete={handleDeleteHistoryItem}
+            onToggleFavorite={handleToggleFavorite}
+            onClearAll={handleClearAllHistory}
+            expanded={historyExpanded}
+            setExpanded={setHistoryExpanded}
+          />
           </div>
 
           {/* RIGHT: Results / Validation Report */}

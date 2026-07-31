@@ -3,7 +3,7 @@ import {
   Briefcase,
   Trash2,
   Calendar,
-  FileText,
+  ChevronDown,
   ChevronRight,
   Star,
 } from "lucide-react";
@@ -17,6 +17,9 @@ interface ReportHistoryProps {
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
 
+  expanded: boolean;
+  setExpanded: React.Dispatch<React.SetStateAction<boolean>>;
+
   onSelect: (report: BusinessAnalysisReport) => void;
   onDelete: (id: string, e: React.MouseEvent) => void;
   onToggleFavorite: (id: string, e: React.MouseEvent) => void;
@@ -27,12 +30,25 @@ export default function ReportHistory({
   historyList,
   searchTerm,
   setSearchTerm,
+  expanded,
+  setExpanded,
   selectedReportId,
   onSelect,
   onDelete,
   onToggleFavorite,
   onClearAll,
 }: ReportHistoryProps) {
+  // Live Search
+  const filteredHistory = historyList.filter((report) => {
+    const query = searchTerm.toLowerCase();
+
+    return (
+      report.businessName.toLowerCase().includes(query) ||
+      report.elevatorPitch.toLowerCase().includes(query) ||
+      report.createdAt.toLowerCase().includes(query)
+    );
+  });
+
   if (historyList.length === 0) {
     return (
       <div className="bg-slate-900 border border-neutral-900/5 rounded-sm p-6 text-center space-y-3 shadow-inner">
@@ -56,101 +72,142 @@ export default function ReportHistory({
 
   return (
     <div className="bg-slate-900 border border-neutral-900/5 rounded-sm shadow-xl overflow-hidden flex flex-col">
-      {/* Header */}
-      <div className="p-4 border-b border-neutral-900/5 flex items-center justify-between">
-        <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-gold-500 flex items-center gap-1.5">
-          <FileText className="w-3.5 h-3.5" />
-          Saved Analyses ({historyList.length})
-        </h3>
 
+      {/* Header */}
+      <div className="p-4 border-b border-neutral-900/5">
         <button
-          onClick={onClearAll}
-          className="text-[9px] text-red-600 hover:text-red-700 uppercase tracking-wider font-semibold"
+          onClick={() => setExpanded(!expanded)}
+          className="w-full flex items-center justify-between"
         >
-          Clear All
+          <div className="flex items-center gap-2">
+            {expanded ? (
+              <ChevronDown className="w-4 h-4 text-gold-500" />
+            ) : (
+              <ChevronRight className="w-4 h-4 text-gold-500" />
+            )}
+
+            <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-gold-500">
+              Saved Analyses
+            </span>
+          </div>
+
+          <span className="text-xs text-neutral-500">
+            {historyList.length} Reports
+          </span>
         </button>
       </div>
-      <div className="p-3 border-b border-neutral-900/5">
-  <input
-    type="text"
-    placeholder="Search reports..."
-    value={searchTerm}
-    onChange={(e) => setSearchTerm(e.target.value)}
-    className="w-full bg-slate-950 border border-slate-200 rounded-sm px-3 py-2 text-xs text-neutral-900 placeholder-slate-400/40 focus:outline-none focus:border-gold-500"
-  />
-</div>
 
-      {/* Reports */}
-      <div className="divide-y divide-white/5 max-h-[360px] overflow-y-auto scrollbar-none">
-        {historyList.map((report) => {
-          const isSelected = selectedReportId === report.id;
+      {expanded && (
+        <>
 
-          return (
-            <div
-              key={report.id}
-              onClick={() => onSelect(report)}
-              className={`p-4 flex justify-between items-start gap-3 cursor-pointer transition-all ${
-                isSelected
-                  ? "bg-gold-500/10 border-l-2 border-gold-500"
-                  : "hover:bg-neutral-900/5 border-l-2 border-transparent"
-              }`}
+          {/* Search */}
+          <div className="p-3 border-b border-neutral-900/5">
+            <input
+              type="text"
+              placeholder="Search reports..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-200 rounded-sm px-3 py-2 text-xs text-neutral-900 placeholder-slate-400/40 focus:outline-none focus:border-gold-500"
+            />
+          </div>
+
+          {/* Clear All */}
+          <div className="flex justify-end px-3 py-2 border-b border-neutral-900/5">
+            <button
+              onClick={onClearAll}
+              className="text-[9px] uppercase tracking-wider font-semibold text-red-600 hover:text-red-700"
             >
-              {/* Left Side */}
-              <div className="flex-1 min-w-0 space-y-1">
-                <h4
-                  className={`truncate font-bold ${
-                    isSelected
-                      ? "text-gold-600 text-sm"
-                      : "text-neutral-900 text-xs"
-                  }`}
-                >
-                  {report.businessName}
-                </h4>
+              Clear All
+            </button>
+          </div>
 
-                <p className="text-[10px] text-neutral-900/50 truncate italic">
-                  "{report.elevatorPitch}"
-                </p>
+          {/* Reports */}
+          <div className="divide-y divide-white/5 max-h-[360px] overflow-y-auto scrollbar-none">
 
-                <div className="flex items-center gap-1 text-[9px] text-neutral-900/30 uppercase tracking-wider">
-                  <Calendar className="w-3 h-3" />
-                  <span>{report.createdAt}</span>
-                </div>
+            {filteredHistory.length === 0 ? (
+              <div className="p-6 text-center text-xs text-neutral-500">
+                No reports found.
               </div>
+            ) : (
+              filteredHistory.map((report) => {
+                const isSelected = selectedReportId === report.id;
 
-              {/* Right Side */}
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={(e) => onToggleFavorite(report.id, e)}
-                  title="Favorite"
-                  className="p-1 rounded hover:bg-neutral-900/5 transition"
-                >
-                  <Star
-                    className={`w-4 h-4 ${
-                      report.favorite
-                        ? "fill-yellow-400 text-gold-700"
-                        : "text-neutral-900/30"
+                return (
+                  <div
+                    key={report.id}
+                    onClick={() => onSelect(report)}
+                    className={`p-4 flex justify-between items-start gap-3 cursor-pointer transition-all ${
+                      isSelected
+                        ? "bg-gold-500/10 border-l-2 border-gold-500"
+                        : "hover:bg-neutral-900/5 border-l-2 border-transparent"
                     }`}
-                  />
-                </button>
+                  >
+                    {/* Left Side */}
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <h4
+                        className={`truncate font-bold ${
+                          isSelected
+                            ? "text-gold-600 text-sm"
+                            : "text-neutral-900 text-xs"
+                        }`}
+                      >
+                        {report.businessName}
+                      </h4>
 
-                <button
-                  onClick={(e) => onDelete(report.id, e)}
-                  title="Delete"
-                  className="p-1 rounded hover:bg-neutral-900/5 hover:text-red-600 transition"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                      <p className="text-[10px] text-neutral-900/50 truncate italic">
+                        "{report.elevatorPitch}"
+                      </p>
 
-                <ChevronRight
-                  className={`w-4 h-4 ${
-                    isSelected ? "text-gold-600" : "text-neutral-900/20"
-                  }`}
-                />
-              </div>
-            </div>
-          );
-        })}
-      </div>
+                      <div className="flex items-center gap-1 text-[9px] text-neutral-900/30 uppercase tracking-wider">
+                        <Calendar className="w-3 h-3" />
+                        <span>{report.createdAt}</span>
+                      </div>
+                    </div>
+
+                    {/* Right Side */}
+                    <div className="flex items-center gap-1">
+
+                      <button
+                        onClick={(e) => onToggleFavorite(report.id, e)}
+                        title="Favorite"
+                        className="p-1 rounded hover:bg-neutral-900/5 transition"
+                      >
+                        <Star
+                          className={`w-4 h-4 ${
+                            report.favorite
+                              ? "fill-yellow-400 text-gold-700"
+                              : "text-neutral-900/30"
+                          }`}
+                        />
+                      </button>
+
+                      <button
+                        onClick={(e) => onDelete(report.id, e)}
+                        title="Delete"
+                        className="p-1 rounded hover:bg-neutral-900/5 hover:text-red-600 transition"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+
+                      <ChevronRight
+                        className={`w-4 h-4 ${
+                          isSelected
+                            ? "text-gold-600"
+                            : "text-neutral-900/20"
+                        }`}
+                      />
+
+                    </div>
+                  </div>
+                );
+              })
+            )}
+
+          </div>
+
+        </>
+      )}
+
     </div>
   );
 }
